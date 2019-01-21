@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>FoodsCooked</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <h1>FoodsCooked!</h1>
+    <ol>
+    <% for(let i = 0; i < list.length; i++){ %>
+        <li><%=list[i].name%></li>
+    <% } %>
+    </ol>
+
+    <form action="/" method="POST">
+        <input type="text" name="newItem" placeholder="Enter recipe name here" id="">
+        <button type="submit" name="button">Add</button>
+    </form>
+</body>
+</html>
