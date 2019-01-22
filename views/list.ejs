@@ -9,14 +9,28 @@
 <body>
     <h1>FoodsCooked!</h1>
     <ol>
-    <% for(let i = 0; i < list.length; i++){ %>
-        <li><%=list[i].name%></li>
-    <% } %>
+    <% list.forEach(item => { %>
+        <li><%=item.name%></li>
+    <% }); %>    
     </ol>
 
     <form action="/" method="POST">
+        <label for="">Add List Item: </label>
         <input type="text" name="newItem" placeholder="Enter recipe name here" id="">
         <button type="submit" name="button">Add</button>
+    </form>
+    <br>
+    <form action="/?_method=PUT" method="POST">
+        <label for="">Update List Item: </label>
+        <input type="text" name="itemName" placeholder="Enter recipe name here" id="">
+        <input type="text" name="updateItem" placeholder="Enter new to replace recipe name here" id="">
+        <button type="submit" name="updateButton">Update</button>
+    </form>
+    <br>
+    <form action="/?_method=DELETE" method="POST">
+        <label for="">Delete List Item: </label>
+        <input type="text" name="deleteId" placeholder="Enter the list number of the recipe to delete" id="">
+        <button type="submit">Delete</button>
     </form>
 </body>
 </html>

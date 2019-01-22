@@ -21,6 +21,8 @@
  * Set favorites
  * Provide links to suggested grocery retailers
  * Print grocery list or recipe functionality
+ * Email system, newsletter, etc
+ * Premium feature: Have your page or recipe featured on the home page/landing page for all to see. For limited time? Remain forever, but be at fixed position in list? Pay to be put at front position again?
  * 
  * TODO
  * 
@@ -28,10 +30,12 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const methodOverride = require('method-override');
 const mongoose = require('mongoose');
 
 const app = express();
 app.set('view engine', 'ejs');
+app.use(methodOverride("_method"));
 app.use(bodyParser.urlencoded({extended: true}));
 
 mongoose.connect("mongodb://localhost:27017/recipeDB", {useNewUrlParser: true});
@@ -52,13 +56,14 @@ app.get("/", function(req, res){
         if(err){
             console.log(err);
         } else {
-           // mongoose.connection.close();
+           
             recipes.forEach(recipe => {
                 console.log(recipe);
                 list.push(recipe);
             })
             res.render("list", {list: list});
         }
+        //mongoose.connection.close();
     })
     console.log("Connected");
 });
@@ -76,6 +81,26 @@ app.post("/", function(req, res){
     
     //list.push(recipe);
     res.redirect("/");
+});
+
+app.put("/", function(req, res){
+    console.log("PUT Request Successful");
+    let itemName = req.body.itemName;
+    let updateItem = req.body.updateItem;
+    console.log(itemName, updateItem);
+    Recipe.findOneAndUpdate({ name: itemName }, { name: updateItem }, function(err){
+        console.log("update successful");
+        res.redirect("/");
+    });
+});
+
+app.delete("/", function(req, res){
+    let deleteId = Number(req.body.deleteId);
+    console.log(deleteId+" is the deleteId");
+    Recipe.findOneAndDelete( {_id: deleteId}, function(err){
+        console.log("Delete successful");
+        res.redirect("/");
+    });
 });
 
 app.listen(3000, function(){
