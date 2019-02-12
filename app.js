@@ -43,6 +43,7 @@ mongoose.connect("mongodb://localhost:27017/recipeDB", {useNewUrlParser: true});
 const recipeSchema = new mongoose.Schema({
     _id: Number,
     name: String,
+    ingredients: []
 
 });
 
@@ -50,6 +51,9 @@ const Recipe = mongoose.model("Recipe", recipeSchema);
 
 let list;
 
+/**
+ * Comment
+ */
 app.get("/", function(req, res){
     list = [];
     Recipe.find(function(err, recipes){
@@ -68,10 +72,13 @@ app.get("/", function(req, res){
     console.log("Connected");
 });
 
+/**
+ * 
+ */
 app.post("/", function(req, res){
     let item = (req.body.newItem);
     console.log("This is the recipe name submitted: " + item);
-    console.log("Lenght of the list array: "+list.length);
+    console.log("Length of the list array: "+list.length);
     //Recipe.updateOne({_id: (list.length+1), name: item.name});
     const recipe = new Recipe({
         _id: (list.length+1),
@@ -83,17 +90,46 @@ app.post("/", function(req, res){
     res.redirect("/");
 });
 
+/**
+ * 
+ */
 app.put("/", function(req, res){
     console.log("PUT Request Successful");
+    let ingredientName = req.body.ingredientName;
+    if(ingredientName){
+        console.log(ingredientName + " in conditional");
+        /**
+         * I am not happy with this push command. I don't understand it well, but I know it works. I have a lot to learn about
+         * database control/configuration. The "_id: 1" is hardcoded to modify the first item in the database only.
+         */
+        Recipe.findOneAndUpdate({_id: 1}, {$push: {ingredients: ingredientName}}, function(err){
+            console.log("update success!!!! redirecting");
+            res.redirect("/");
+        });
+    }
+
     let itemName = req.body.itemName;
     let updateItem = req.body.updateItem;
-    console.log(itemName, updateItem);
-    Recipe.findOneAndUpdate({ name: itemName }, { name: updateItem }, function(err){
-        console.log("update successful");
-        res.redirect("/");
-    });
+    /**
+     * I use this if statement to control the flow of which findOneAndUpdate method runs. I thought by putting the res.redirect() method that it would
+     * force the program to skip instructions below, but without the if block the code continues to run. I think javascript is working on
+     * the findOneAndUpdate function above while moving through the code below and NOT stopping upon hitting the redirect() method, or it
+     * begins to invoke the findOneAndUpdate() method below while the above redirect() is taking place.
+     * 
+     * I think this is a dirty fix and want to go over it
+     */
+    if(itemName && updateItem){        
+        console.log(itemName, updateItem);
+        Recipe.findOneAndUpdate({ name: itemName }, { name: updateItem }, function(err){
+            console.log("update successful");
+            res.redirect("/");
+        });
+    }
 });
 
+/**
+ * 
+ */
 app.delete("/", function(req, res){
     let deleteId = Number(req.body.deleteId);
     console.log(deleteId+" is the deleteId");
@@ -103,6 +139,9 @@ app.delete("/", function(req, res){
     });
 });
 
+/**
+ * 
+ */
 app.listen(3000, function(){
     console.log("Server listening on port 3000");
 });

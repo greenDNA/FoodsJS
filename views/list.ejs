@@ -11,6 +11,11 @@
     <ol>
     <% list.forEach(item => { %>
         <li><%=item.name%></li>
+        <ol>
+            <% item.ingredients.forEach(ingredient => {%>
+                <li><%=ingredient%></li>
+            <% }); %>
+        </ol>   
     <% }); %>    
     </ol>
 
@@ -25,6 +30,12 @@
         <input type="text" name="itemName" placeholder="Enter recipe name here" id="">
         <input type="text" name="updateItem" placeholder="Enter new to replace recipe name here" id="">
         <button type="submit" name="updateButton">Update</button>
+    </form>
+    <br>
+    <form action="/?_method=PUT" method="POST">
+        <label for="">Update List Ingredients: </label>
+        <input type="text" name="ingredientName" placeholder="Enter ingredient to add" id="">
+        <button type="submit" name="ingredientButton">Add Ingredient</button>
     </form>
     <br>
     <form action="/?_method=DELETE" method="POST">
